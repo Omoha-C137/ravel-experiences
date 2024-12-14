@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+
+{% block title %}My Experiences{% endblock %}
+
+{% block content %}
+    <div class="experiences-header">
+        <h1>My Travel Experiences</h1>
+        <a href="{{ url_for('add_experience') }}" class="btn btn-primary">Add New Experience</a>
+    </div>
+
+    {% if experiences %}
+        <div class="experience-grid">
+            {% for experience in experiences %}
+                <div class="experience-card">
+                    <h3>{{ experience.title }}</h3>
+                    <p class="location">📍 {{ experience.location }}</p>
+                    <p class="rating">
+                        {% for _ in range(experience.rating) %}⭐{% endfor %}
+                    </p>
+                    <p class="description">{{ experience.description[:150] }}...</p>
+                    <p class="date">Visited: {{ experience.date_visited.strftime('%B %d, %Y') }}</p>
+                    <div class="experience-actions">
+                        <a href="#" class="btn btn-edit">Edit</a>
+                        <a href="#" class="btn btn-delete">Delete</a>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="no-experiences">
+            <p>You haven't shared any experiences yet.</p>
+            <a href="{{ url_for('add_experience') }}" class="btn btn-primary">Share Your First Experience</a>
+        </div>
+    {% endif %}
+{% endblock %}

@@ -1,0 +1,156 @@
+{% extends 'base.html' %}
+
+{% block title %}Sign Up{% endblock %}
+
+{% block content %}
+<div class="auth-container">
+    <div class="auth-box">
+        <div class="auth-header">
+            <h1>Join Travel Experiences</h1>
+            <p>Start sharing your amazing travel stories with travelers worldwide!</p>
+        </div>
+
+        <div class="social-auth">
+            <a href="{{ url_for('google_login') }}" class="btn btn-google">
+                <img src="{{ url_for('static', filename='images/google-logo.png') }}" alt="Google Logo">
+                Continue with Google
+            </a>
+        </div>
+
+        <div class="auth-divider">
+            <span>or sign up with email</span>
+        </div>
+
+        <form method="POST" class="auth-form">
+            <div class="form-group">
+                <div class="input-icon">
+                    <i class="fas fa-user"></i>
+                    <input type="text" 
+                           name="{{ form.username.name }}"
+                           value="{{ form.username.data or '' }}"
+                           class="form-control" 
+                           placeholder="Username">
+                </div>
+                {% if form.username.errors %}
+                    <div class="form-error">{{ form.username.errors[0] }}</div>
+                {% endif %}
+            </div>
+
+            <div class="form-group">
+                <div class="input-icon">
+                    <i class="fas fa-envelope"></i>
+                    <input type="email" 
+                           name="{{ form.email.name }}"
+                           value="{{ form.email.data or '' }}"
+                           class="form-control" 
+                           placeholder="Email address">
+                </div>
+                {% if form.email.errors %}
+                    <div class="form-error">{{ form.email.errors[0] }}</div>
+                {% endif %}
+            </div>
+
+            <div class="form-group">
+                <div class="input-icon">
+                    <i class="fas fa-lock"></i>
+                    <input type="password" 
+                           name="{{ form.password.name }}"
+                           class="form-control" 
+                           placeholder="Password">
+                    <button type="button" class="toggle-password">
+                        <i class="fas fa-eye"></i>
+                    </button>
+                </div>
+                {% if form.password.errors %}
+                    <div class="form-error">{{ form.password.errors[0] }}</div>
+                {% endif %}
+                <small class="form-text">
+                    Password must be at least 8 characters long
+                </small>
+            </div>
+
+            <div class="form-group">
+                <div class="input-icon">
+                    <i class="fas fa-map-marker-alt"></i>
+                    <input type="text" 
+                           name="{{ form.location.name }}"
+                           value="{{ form.location.data or '' }}"
+                           class="form-control" 
+                           placeholder="Your city (optional)">
+                </div>
+                <small class="form-text">
+                    This helps us show you nearby experiences
+                </small>
+            </div>
+
+            <div class="form-check">
+                <input type="checkbox" 
+                       name="{{ form.terms.name }}"
+                       id="terms"
+                       {% if form.terms.data %}checked{% endif %}>
+                <label for="terms">
+                    I agree to the <a href="{{ url_for('terms') }}" target="_blank">Terms of Service</a> and 
+                    <a href="{{ url_for('privacy') }}" target="_blank">Privacy Policy</a>
+                </label>
+                {% if form.terms.errors %}
+                    <div class="form-error">{{ form.terms.errors[0] }}</div>
+                {% endif %}
+            </div>
+
+            <button type="submit" class="btn btn-primary btn-block">
+                Create Account
+            </button>
+        </form>
+
+        <div class="auth-footer">
+            Already have an account? <a href="{{ url_for('login') }}">Log in</a>
+        </div>
+    </div>
+
+    <div class="auth-features">
+        <h2>Why Join Us?</h2>
+        <div class="feature-grid">
+            <div class="feature-item">
+                <i class="fas fa-globe-americas"></i>
+                <h3>Share Your Journey</h3>
+                <p>Document and share your travel experiences with a global community of travelers.</p>
+            </div>
+            <div class="feature-item">
+                <i class="fas fa-map-marked-alt"></i>
+                <h3>Discover Places</h3>
+                <p>Find hidden gems and popular destinations through authentic traveler stories.</p>
+            </div>
+            <div class="feature-item">
+                <i class="fas fa-users"></i>
+                <h3>Connect</h3>
+                <p>Meet fellow travelers and exchange tips about your favorite destinations.</p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Password visibility toggle
+    const toggleButtons = document.querySelectorAll('.toggle-password');
+    toggleButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            const input = this.parentElement.querySelector('input');
+            const icon = this.querySelector('i');
+            
+            if (input.type === 'password') {
+                input.type = 'text';
+                icon.classList.remove('fa-eye');
+                icon.classList.add('fa-eye-slash');
+            } else {
+                input.type = 'password';
+                icon.classList.remove('fa-eye-slash');
+                icon.classList.add('fa-eye');
+            }
+        });
+    });
+});
+</script>
+{% endblock %}

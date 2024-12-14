@@ -1,0 +1,12 @@
+Flask==2.3.3
+Flask-SQLAlchemy==3.1.1
+Flask-Login==0.6.2
+Werkzeug==2.3.7
+requests==2.31.0
+python-dotenv==1.0.0
+oauthlib==3.2.2
+pyOpenSSL==23.3.0
+Flask-Dance==7.0.0
+blinker==1.7.0
+WTForms==3.0.1
+MarkupSafe==2.1.1

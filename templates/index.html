@@ -1,0 +1,169 @@
+{% extends 'base.html' %}
+
+{% block title %}Home{% endblock %}
+
+{% block content %}
+    <div class="hero">
+        <div class="hero-content">
+            <h1>Discover Amazing Travel Experiences</h1>
+            <p>Share and explore authentic travel experiences from around the world</p>
+            
+            <div class="search-box">
+                <form action="{{ url_for('search') }}" method="get" class="search-form">
+                    <input type="text" name="q" placeholder="Search destinations, experiences, or activities...">
+                    <select name="city">
+                        <option value="">Select City</option>
+                        <option value="Paris">Paris</option>
+                        <option value="Tokyo">Tokyo</option>
+                        <option value="New York">New York</option>
+                        <!-- Add more cities -->
+                    </select>
+                    <select name="budget">
+                        <option value="">Budget Range</option>
+                        <option value="budget">Budget</option>
+                        <option value="moderate">Moderate</option>
+                        <option value="luxury">Luxury</option>
+                    </select>
+                    <button type="submit" class="btn btn-primary">Search</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    {% if user_location %}
+    <section class="nearby-experiences">
+        <h2>Near {{ user_location.city if user_location.city else 'You' }}</h2>
+        <div class="experience-grid">
+            {% for experience in nearby_experiences %}
+                <div class="experience-card">
+                    {% if experience.photos %}
+                        <div class="experience-image">
+                            <img src="{{ url_for('static', filename='uploads/' + experience.photos[0].photo_url) }}" alt="{{ experience.title }}">
+                        </div>
+                    {% endif %}
+                    <div class="experience-content">
+                        <h3>{{ experience.title }}</h3>
+                        <p class="location"> 📍 {{ experience.city }}, {{ experience.country }}</p>
+                        <div class="ratings">
+                            {% for rating in experience.ratings %}
+                                {% if rating.category == 'overall' %}
+                                    <span class="rating">
+                                        {% for _ in range(rating.rating) %}⭐{% endfor %}
+                                    </span>
+                                {% endif %}
+                            {% endfor %}
+                        </div>
+                        <p class="description">{{ experience.description[:100] }}...</p>
+                        <div class="experience-meta">
+                            <span class="budget">{{ experience.budget_category|title }}</span>
+                            <span class="duration">{{ experience.duration }}</span>
+                        </div>
+                        <div class="experience-stats">
+                            <span>👁️ {{ experience.views }}</span>
+                            <span>❤️ {{ experience.likes }}</span>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </section>
+    {% endif %}
+
+    <section class="popular-experiences">
+        <h2>Popular Experiences</h2>
+        <div class="experience-grid">
+            {% for experience in popular_experiences %}
+                <div class="experience-card">
+                    {% if experience.photos %}
+                        <div class="experience-image">
+                            <img src="{{ url_for('static', filename='uploads/' + experience.photos[0].photo_url) }}" alt="{{ experience.title }}">
+                        </div>
+                    {% endif %}
+                    <div class="experience-content">
+                        <h3>{{ experience.title }}</h3>
+                        <p class="location"> 📍 {{ experience.city }}, {{ experience.country }}</p>
+                        <div class="ratings">
+                            {% for rating in experience.ratings %}
+                                {% if rating.category == 'overall' %}
+                                    <span class="rating">
+                                        {% for _ in range(rating.rating) %}⭐{% endfor %}
+                                    </span>
+                                {% endif %}
+                            {% endfor %}
+                        </div>
+                        <p class="description">{{ experience.description[:100] }}...</p>
+                        <div class="experience-meta">
+                            <span class="budget">{{ experience.budget_category|title }}</span>
+                            <span class="duration">{{ experience.duration }}</span>
+                        </div>
+                        <div class="experience-stats">
+                            <span>👁️ {{ experience.views }}</span>
+                            <span>❤️ {{ experience.likes }}</span>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </section>
+
+    <section class="categories">
+        <h2>Explore by Category</h2>
+        <div class="category-grid">
+            <div class="category-card">
+                <i class="category-icon">🏖️</i>
+                <h3>Beach Getaways</h3>
+                <a href="{{ url_for('search', category='beach') }}" class="btn btn-secondary">Explore</a>
+            </div>
+            <div class="category-card">
+                <i class="category-icon">🏔️</i>
+                <h3>Mountain Adventures</h3>
+                <a href="{{ url_for('search', category='mountain') }}" class="btn btn-secondary">Explore</a>
+            </div>
+            <div class="category-card">
+                <i class="category-icon">🏛️</i>
+                <h3>Cultural Tours</h3>
+                <a href="{{ url_for('search', category='cultural') }}" class="btn btn-secondary">Explore</a>
+            </div>
+            <div class="category-card">
+                <i class="category-icon">🍴</i>
+                <h3>Food & Dining</h3>
+                <a href="{{ url_for('search', category='food') }}" class="btn btn-secondary">Explore</a>
+            </div>
+        </div>
+    </section>
+
+    {% if not current_user.is_authenticated %}
+        <section class="cta-section">
+            <div class="cta-content">
+                <h2>Share Your Own Experience</h2>
+                <p>Join our community and share your travel stories with travelers worldwide!</p>
+                <div class="cta-buttons">
+                    <a href="{{ url_for('register') }}" class="btn btn-primary">Get Started</a>
+                    <a href="{{ url_for('login') }}" class="btn btn-secondary">Login</a>
+                </div>
+            </div>
+        </section>
+    {% endif %}
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Like button functionality
+    const likeButtons = document.querySelectorAll('.like-button');
+    likeButtons.forEach(button => {
+        button.addEventListener('click', async function() {
+            const experienceId = this.dataset.experienceId;
+            const response = await fetch(`/experience/${experienceId}/like`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
+            const data = await response.json();
+            this.querySelector('.likes-count').textContent = data.likes;
+        });
+    });
+});
+</script>
+{% endblock %}
